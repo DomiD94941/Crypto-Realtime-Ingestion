@@ -9,6 +9,8 @@ import okio.ByteString;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A WebSocket listener that connects to the Binance trade stream,
@@ -22,6 +24,7 @@ public class BinanceWebSocketListener extends WebSocketListener {
     private final KafkaProducer<String, String> producer; // Kafka producer instance
     private final String topic;                           // Kafka topic name
     private final ObjectMapper mapper = new ObjectMapper(); // JSON mapper (Jackson)
+    private final Logger log = LoggerFactory.getLogger(BinanceWebSocketListener.class.getSimpleName());
 
     /**
      * Constructor to initialize the WebSocket listener.
@@ -37,7 +40,7 @@ public class BinanceWebSocketListener extends WebSocketListener {
 
     @Override
     public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-        System.out.println("Connected to Binance WebSocket");
+        log.info("Connected to Binance WebSocket");
     }
 
     @Override
@@ -55,30 +58,29 @@ public class BinanceWebSocketListener extends WebSocketListener {
             // Send asynchronously to Kafka
             producer.send(record, (meta, ex) -> {
                 if (ex != null) {
-                    System.err.println("Kafka send failed: " + ex.getMessage());
+                    log.error("Kafka send failed: {}", ex.getMessage());
                 }
             });
 
         } catch (Exception e) {
-            System.err.println("Failed to parse Binance message: " + e.getMessage());
+            log.error("Failed to parse Binance message: {}", e.getMessage());
         }
     }
 
     @Override
     public void onMessage(@NotNull WebSocket webSocket, ByteString bytes) {
-        // Binance usually sends text messages, but handle binary just in case
         onMessage(webSocket, bytes.utf8());
     }
 
     @Override
     public void onClosing(WebSocket webSocket, int code, @NotNull String reason) {
-        System.out.println("Closing WebSocket: " + code + " / " + reason);
+        log.info("Closing WebSocket: {} / {}", code, reason);
         webSocket.close(1000, null); // normal closure
     }
 
     @Override
     public void onFailure(@NotNull WebSocket webSocket, Throwable t, Response response) {
-        System.err.println("WebSocket failure: " + t.getMessage());
+        log.error("WebSocket failure: {}", t.getMessage());
     }
 
     /**
