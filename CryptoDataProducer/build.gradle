@@ -24,6 +24,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.launchdarkly/okhttp-eventsource
     implementation("com.launchdarkly:okhttp-eventsource:4.1.1")
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
 }
 
 test {
