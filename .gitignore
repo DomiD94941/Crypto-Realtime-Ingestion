@@ -1,0 +1,20 @@
+# Gradle build system files and folders
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA project files
+.idea/
+*.iml
+out/
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
