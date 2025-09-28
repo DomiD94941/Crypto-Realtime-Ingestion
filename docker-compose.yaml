@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: "conduktor"
       POSTGRES_PASSWORD: "some_password"
       POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+
   conduktor-console:
     image: conduktor/conduktor-console:1.36.2
     ports:
@@ -20,25 +21,24 @@ services:
       CDK_CLUSTERS_0_ID: "default"
       CDK_CLUSTERS_0_NAME: "My Local Kafka Cluster"
       CDK_CLUSTERS_0_COLOR: "#0013E7"
-      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: "PLAINTEXT://kafka1:19092"
-      # CONSOLE_JAVA_OPTS: "-XX:UseSVE=0"
+      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: "PLAINTEXT://kafka:19092"
+
   kafka:
     image: confluentinc/cp-kafka:8.0.0
-    hostname: kafka1
-    container_name: kafka1
+    hostname: kafka
+    container_name: kafka
     ports:
       - "9092:9092"
       - "29092:29092"
-      - "9999:9999" # JMX Port
-      - "9099:9099"  # Internal inter-broker communication
+      - "9999:9999"  # JMX (optional)
+      - "9099:9099"  # Controller listener (KRaft)
     environment:
-      environment:
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9099"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9099"
       KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092,DOCKER://0.0.0.0:29092,CONTROLLER://0.0.0.0:9099
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
@@ -48,6 +48,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+
   ksqldb-server:
     image: confluentinc/ksqldb-server:0.29.0
     hostname: ksqldb-server
@@ -55,12 +56,14 @@ services:
     depends_on:
       - kafka
     ports:
-      - "8088:8088"   # REST API ksqlDB
+      - "8088:8088"
     environment:
       KSQL_CONFIG_DIR: "/etc/ksqldb"
-      KSQL_BOOTSTRAP_SERVERS: "kafka1:19092"
+      KSQL_BOOTSTRAP_SERVERS: "kafka:19092"
       KSQL_LISTENERS: "http://0.0.0.0:8088"
       KSQL_KSQL_SERVICE_ID: "crypto-ksqldb"
+      KSQL_AUTO_OFFSET_RESET: "earliest"
+
 volumes:
   pg_data: {}
   conduktor_data: {}
