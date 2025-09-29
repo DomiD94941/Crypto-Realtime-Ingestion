@@ -2,6 +2,7 @@ package io.crypto.realtime.producer.btc;
 
 import io.crypto.realtime.producer.BinanceWebSocketListener;
 import io.crypto.realtime.producer.KafkaTopicCreator;
+import io.crypto.realtime.producer.ksql.KsqlInitializer;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BtcProducer {
 
+
     private static final String BOOTSTRAP_SERVER = "127.0.0.1:9092";
 
     // Binance WebSocket endpoint for BTC/USDT trade stream
@@ -29,6 +31,10 @@ public class BtcProducer {
     private static final Logger log = LoggerFactory.getLogger(BtcProducer.class.getSimpleName());
 
     public static void main(String[] args) {
+
+        String ksqlUrl = "http://localhost:8088"; // lub "http://ksqldb-server:8088" gdy Java w kontenerze
+        KsqlInitializer.initBinanceAvgPerMin(ksqlUrl, TOPIC, "btc_avg_per_min");
+
 
         KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, TOPIC, 3, (short) 1);
 
