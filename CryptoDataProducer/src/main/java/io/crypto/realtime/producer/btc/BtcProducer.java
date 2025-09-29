@@ -1,5 +1,6 @@
 package io.crypto.realtime.producer.btc;
 
+import io.crypto.realtime.producer.KafkaTopicCreator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
@@ -15,16 +16,20 @@ import java.util.concurrent.TimeUnit;
 
 public class BtcProducer {
 
+    private static final String BOOTSTRAP_SERVER = "127.0.0.1:9092";
+
     // Binance WebSocket endpoint for BTC/USDT trade stream
     private static final String BINANCE_WS = "wss://stream.binance.com:9443/ws/btcusdt@trade";
 
     // Kafka topic where trade events will be published
-    private static final String TOPIC = "crypto.realtime.data";
+    private static final String TOPIC = "crypto.realtime.data.btc";
 
     // Logger for logging information and errors
     private static final Logger log = LoggerFactory.getLogger(BtcProducer.class.getSimpleName());
 
     public static void main(String[] args) {
+
+        KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, TOPIC, 3, (short) 1);
 
         // Kafka Producer configuration
         KafkaProducer<String, String> producer = getKafkaProducer();
@@ -58,7 +63,7 @@ public class BtcProducer {
     @NotNull
     private static KafkaProducer<String, String> getKafkaProducer() {
         Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092"); // Kafka broker address
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER); // Kafka broker address
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName()); // key serializer
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName()); // value serializer
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all"); // strongest delivery guarantee
