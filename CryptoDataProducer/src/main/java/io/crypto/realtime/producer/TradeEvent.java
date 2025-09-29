@@ -1,4 +1,4 @@
-package io.crypto.realtime.producer.btc;
+package io.crypto.realtime.producer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
