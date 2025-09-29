@@ -60,8 +60,15 @@ public class BinanceWebSocketListener extends WebSocketListener {
                 if (ex != null) {
                     log.error("Kafka send failed: {}", ex.getMessage());
                 } else {
-                    log.info("Message sent to topic {} partition {} offset {}",
-                            meta.topic(), meta.partition(), meta.offset());
+                    log.info(
+                            "SENT: key={} value={} \nTOPIC={} || PARTITION={} || OFFSET={} || TIMESTAMP={}",
+                            record.key(),
+                            record.value(),
+                            meta.topic(),
+                            meta.partition(),
+                            meta.offset(),
+                            meta.timestamp()
+                    );
                 }
             });
 
