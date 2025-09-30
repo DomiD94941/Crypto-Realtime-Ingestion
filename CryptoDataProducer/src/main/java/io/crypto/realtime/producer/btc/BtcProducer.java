@@ -27,16 +27,22 @@ public class BtcProducer {
     // Kafka topic where trade events will be published
     private static final String TOPIC = "crypto.realtime.data.btc";
 
+    private static final String SINK_TOPIC = "btc.avg.per.minute";
+
     // Logger for logging information and errors
     private static final Logger log = LoggerFactory.getLogger(BtcProducer.class.getSimpleName());
 
     public static void main(String[] args) {
 
-        String ksqlUrl = "http://localhost:8088"; // lub "http://ksqldb-server:8088" gdy Java w kontenerze
-        KsqlInitializer.initBinanceAvgPerMin(ksqlUrl, TOPIC, "btc_avg_per_min");
-
-
         KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, TOPIC, 3, (short) 1);
+        KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, SINK_TOPIC, 1, (short) 1);
+
+
+        String ksqlUrl = "http://localhost:8088";
+
+        KsqlInitializer.createSourceStream(ksqlUrl, TOPIC);
+        KsqlInitializer.createFinalAvgTable(ksqlUrl, SINK_TOPIC);
+
 
         // Kafka Producer configuration
         KafkaProducer<String, String> producer = getKafkaProducer();
