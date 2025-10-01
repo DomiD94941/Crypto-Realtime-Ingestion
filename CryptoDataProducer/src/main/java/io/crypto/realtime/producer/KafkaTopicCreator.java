@@ -2,15 +2,31 @@ package io.crypto.realtime.producer;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.errors.TopicExistsException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Utility for idempotently creating Kafka topics.
+ *
+ * <p>Design goals:
+ * <ul>
+ *   <li>Idempotent: safe to call multiple times or concurrently.</li>
+ *   <li>Fail fast with actionable logs.</li>
+ *   <li>Do not fetch all topics to check existence (use describeTopics).</li>
+ * </ul>
+ */
 public final class KafkaTopicCreator {
 
-    private KafkaTopicCreator() {} // utility class – prevent instantiation
+    private static final Logger log = LoggerFactory.getLogger(KafkaTopicCreator.class);
+
+    private KafkaTopicCreator() {
+    } // utility class – prevent instantiation
 
     /**
      * Creates a Kafka topic if it does not already exist. Idempotent.
@@ -32,25 +48,38 @@ public final class KafkaTopicCreator {
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
         try (AdminClient admin = AdminClient.create(props)) {
-            // Check if topic already exists
-            if (topicExists(admin, topicName)) return;
+
+            if (topicExists(admin, topicName)) {
+                log.info("Kafka topic already exists: {}", topicName);
+                return;
+            }
 
             NewTopic newTopic = new NewTopic(topicName, partitions, replication);
             if (configs != null && !configs.isEmpty()) {
                 newTopic.configs(configs);
             }
 
+            log.info("Creating Kafka topic '{}' (partitions={}, replication={}, configs={})",
+                    topicName, partitions, replication, (configs == null ? "{}" : configs));
+
             CreateTopicsResult result = admin.createTopics(Collections.singletonList(newTopic));
-            // Wait synchronously – if someone else creates the topic in the meantime, we catch TopicExistsException
+
+            // Wait synchronously – handle potential race with another creator
             result.values().get(topicName).get();
+
+            log.info("Kafka topic created: {}", topicName);
+
         } catch (ExecutionException e) {
             if (e.getCause() instanceof TopicExistsException) {
-                // Topic was created by someone else at the same time – that's fine
+                // Created concurrently elsewhere – acceptable
+                log.info("Kafka topic '{}' was created concurrently; continuing.", topicName);
                 return;
             }
+            log.error("Failed to create Kafka topic '{}': {}", topicName, e.getMessage(), e);
             throw new RuntimeException("Failed to create topic: " + topicName, e);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
+            log.error("Interrupted while creating Kafka topic '{}'", topicName, ie);
             throw new RuntimeException("Interrupted while creating topic: " + topicName, ie);
         }
     }
@@ -64,9 +93,15 @@ public final class KafkaTopicCreator {
         createIfNotExists(bootstrapServers, topicName, partitions, replication, Collections.emptyMap());
     }
 
+    /**
+     * Simple existence check: list all topics and check if the given name is present.
+     */
     private static boolean topicExists(AdminClient admin, String topicName) {
         try {
-            return admin.listTopics().names().get().contains(topicName);
+            return admin.listTopics()
+                    .names()
+                    .get()
+                    .contains(topicName);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while listing topics", ie);
