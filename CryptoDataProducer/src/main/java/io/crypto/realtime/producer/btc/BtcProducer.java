@@ -37,7 +37,7 @@ public class BtcProducer {
 
         // Ensure topics exist before starting (idempotent creation)
         KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, TOPIC, 3, (short) 1);
-        KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, SINK_TOPIC, 1, (short) 1);
+        KafkaTopicCreator.createIfNotExists(BOOTSTRAP_SERVER, SINK_TOPIC, 3, (short) 1);
 
         // Initialize KSQL streams and tables for downstream analytics
         String ksqlUrl = "http://localhost:8088";
