@@ -64,8 +64,8 @@ public final class KsqlInitializer {
 
         // CTAS statement: aggregate average price in 1-minute tumbling windows
         String ctas = String.join("\n",
-                "CREATE TABLE IF NOT EXISTS BTC_AVG_1M_FINAL",
-                "  WITH (KAFKA_TOPIC='" + sinkTopic + "', VALUE_FORMAT='JSON') AS",
+                "CREATE TABLE IF NOT EXISTS BTC_AVG_1_MIN_FINAL",
+                "  WITH (KAFKA_TOPIC='" + sinkTopic + "', VALUE_FORMAT='JSON', PARTITIONS=3, REPLICAS=1) AS",
                 "SELECT",
                 "  SYMBOL,",
                 "  TIMESTAMPTOSTRING(WINDOWSTART, 'yyyy-MM-dd HH:mm:ss', 'Europe/Warsaw') AS WINDOW_START,",
