@@ -49,3 +49,15 @@ Before you start, make sure you have:
    ./gradlew run   # runs io.crypto.realtime.consumer.btc.ElasticsearchBtcConsumer
    ```
    You can override default CLI arguments (bootstrap servers, topic name, Elasticsearch URL/index) by supplying them to the Gradle run command: `./gradlew run --args="--bootstrap=127.0.0.1:9092 --es=http://localhost:9200 --topic=crypto.realtime.data.btc --index=crypto"`.
+
+5. **Explore the data**
+   * Open Conduktor to confirm messages are flowing through Kafka.
+   * In Kibana, create an index pattern for `crypto*` and build visualisations from the ingested documents.
+
+## How the pieces fit together
+
+1. Binance WebSocket feed provides live trade events.
+2. Producer publishes the events to Kafka and prepares ksqlDB streams/tables for aggregation (e.g., rolling volume windows).
+3. ksqlDB continuously processes the Kafka topics and outputs materialised views.
+4. Consumer subscribes to the raw or aggregated topic and writes each record to Elasticsearch.
+5. Kibana dashboards can be built on the Elasticsearch index for monitoring price/volume trends.
