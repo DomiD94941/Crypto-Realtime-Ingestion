@@ -31,9 +31,9 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ElasticsearchConsumer {
+public class ElasticsearchBtcConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(ElasticsearchConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(ElasticsearchBtcConsumer.class);
 
     // Defaults (overridden by CLI flags)
     private static final String DEFAULT_ES_URL = "http://localhost:9200";
