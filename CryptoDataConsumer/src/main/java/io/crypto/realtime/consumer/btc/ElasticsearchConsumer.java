@@ -88,9 +88,6 @@ public class ElasticsearchConsumer {
         String scheme = uri.getScheme() == null ? "http" : uri.getScheme();
         String host = uri.getHost() == null ? "localhost" : uri.getHost();
         int port = (uri.getPort() == -1) ? ("https".equalsIgnoreCase(scheme) ? 443 : 9200) : uri.getPort();
-
-        // TODO (security): add basic auth / API key / bearer token as required.
-        // TODO (timeouts): configure connect/socket timeouts and max retry timeout.
         RestClient lowLevel = RestClient.builder(new HttpHost(host, port, scheme)).build();
         RestClientTransport transport = new RestClientTransport(lowLevel, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
@@ -130,9 +127,6 @@ public class ElasticsearchConsumer {
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // new groups read from beginning
         props.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");  // manual commit after successful bulk
-
-        // TODO (security): props.setProperty("security.protocol", "SASL_SSL"); etc.
-        // TODO (tuning): max.poll.records, fetch.max.bytes, max.partition.fetch.bytes, max.poll.interval.ms
         log.info("Kafka bootstrap: {}, groupId: {}", bootstrap, groupId);
         return new KafkaConsumer<>(props);
     }
