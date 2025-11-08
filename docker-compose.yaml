@@ -67,21 +67,44 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
     environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - XPACK_SECURITY_ENABLED=true
     ports:
-      - "9200:9200"
+    - "9200:9200"
     volumes:
-      - es_data:/usr/share/elasticsearch/data
+    - es_data:/usr/share/elasticsearch/data
 
+      
   kibana:
     image: docker.elastic.co/kibana/kibana:8.15.2
+    ports:
+    - "5601:5601"
+    environment:
+      - SERVER_NAME=kibana
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_SERVICEACCOUNT_TOKEN=${KIBANA_SERVICE_TOKEN}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  dashboards:
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
+      - kibana
       - elasticsearch
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
+      APP: dashboards
+      KIBANA_URL: http://kibana:5601
+      KIBANA_API_KEY: ${KIBANA_API_KEY}
+      INDEX_NAME: crypto
+    networks:
+      - default
 
 volumes:
   es_data: {}
