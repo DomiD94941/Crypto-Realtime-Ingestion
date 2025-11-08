@@ -1,4 +1,4 @@
-package io.crypto.realtime.producer.ksql;
+package io.crypto.realtime.producers.ksql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;

@@ -1,4 +1,4 @@
-package io.crypto.realtime.consumer.elasticsearch;
+package io.crypto.realtime.consumers.elasticsearch;
 
 import com.google.gson.JsonParser;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

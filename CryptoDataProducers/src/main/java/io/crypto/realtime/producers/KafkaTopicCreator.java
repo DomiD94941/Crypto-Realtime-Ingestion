@@ -1,8 +1,7 @@
-package io.crypto.realtime.producer;
+package io.crypto.realtime.producers;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.errors.TopicExistsException;
-import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

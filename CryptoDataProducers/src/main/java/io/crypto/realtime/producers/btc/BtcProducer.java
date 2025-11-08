@@ -1,8 +1,8 @@
-package io.crypto.realtime.producer.btc;
+package io.crypto.realtime.producers.btc;
 
-import io.crypto.realtime.producer.BinanceWebSocketListener;
-import io.crypto.realtime.producer.KafkaTopicCreator;
-import io.crypto.realtime.producer.ksql.KsqlInitializer;
+import io.crypto.realtime.producers.BinanceWebSocketListener;
+import io.crypto.realtime.producers.KafkaTopicCreator;
+import io.crypto.realtime.producers.ksql.KsqlInitializer;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;

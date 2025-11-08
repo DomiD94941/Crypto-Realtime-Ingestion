@@ -1,4 +1,4 @@
-package io.crypto.realtime.producer.ksql;
+package io.crypto.realtime.producers.ksql;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
-package io.crypto.realtime.consumer.btc;
+package io.crypto.realtime.consumers.btc;
 
-import io.crypto.realtime.consumer.elasticsearch.*;
+import io.crypto.realtime.consumers.elasticsearch.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.json.JsonData;
 import org.apache.kafka.clients.consumer.*;

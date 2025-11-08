@@ -1,4 +1,4 @@
-package io.crypto.realtime.consumer.elasticsearch;
+package io.crypto.realtime.consumers.elasticsearch;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
