@@ -10,7 +10,7 @@ COPY --from=builder /app/CryptoDataConsumers/build/libs/*.jar consumer.jar
 COPY --from=builder /app/CryptoDataProducers/build/libs/*.jar producer.jar
 COPY --from=builder /app/Dashboards/build/libs/*.jar dashboards.jar
 
-ENV APP=btc-consumer
+ENV APP=btc-dashboards
 
 ENTRYPOINT ["/bin/sh", "-c", "\
   echo 'Starting module: '$APP && \
