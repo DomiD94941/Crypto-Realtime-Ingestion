@@ -89,20 +89,6 @@ services:
       - SERVER_NAME=kibana
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
-  dashboards:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: crypto-realtime-ingestion-dashboards
-    depends_on:
-      - kibana
-      - elasticsearch
-    environment:
-      APP: dashboards
-      KIBANA_URL: http://kibana:5601
-      INDEX_NAME: crypto-btc
-    restart: unless-stopped
-
 volumes:
   es_data: {}
   pg_data: {}
