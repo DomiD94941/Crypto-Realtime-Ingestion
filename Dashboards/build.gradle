@@ -3,42 +3,18 @@ plugins {
 }
 
 group = 'io.crypto.realtime.dashboards'
-version = '1.0-SNAPSHOT'
+version = 'unspecified'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
-
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation("org.slf4j:slf4j-api:2.0.17")
-
-    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    implementation("ch.qos.logback:logback-classic:1.5.18")
-
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.5")
-
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime
-    implementation("org.apache.httpcomponents:httpmime:4.5.14")
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
     useJUnitPlatform()
-}
-
-jar {
-    manifest {
-        attributes(
-            'Main-Class': 'io.crypto.realtime.dashboards.Main'
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }

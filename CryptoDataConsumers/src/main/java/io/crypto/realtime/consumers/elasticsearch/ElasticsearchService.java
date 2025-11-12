@@ -7,6 +7,8 @@ import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
+import co.elastic.clients.elasticsearch._types.mapping.DateProperty;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
@@ -51,12 +53,18 @@ public class ElasticsearchService implements Closeable {
     public void ensureIndexExists(String index) throws IOException {
         boolean exists = client.indices().exists(ExistsRequest.of(b -> b.index(index))).value();
         if (!exists) {
-            client.indices().create(CreateIndexRequest.of(b -> b.index(index)));
-            log.info("Index '{}' created", index);
+            client.indices().create(CreateIndexRequest.of(b -> b
+                    .index(index)
+                    .mappings(m -> m
+                            .properties("eventTime", p -> p
+                                    .date(d -> d.format("epoch_millis"))))
+            ));
+            log.info("Index '{}' created with mapping for eventTime", index);
         } else {
             log.info("Index '{}' already exists", index);
         }
     }
+
 
     public void bulkInsert(String index, List<BulkOperation> operations) throws IOException {
         BulkRequest request = new BulkRequest.Builder().operations(operations).build();
