@@ -1,0 +1,6 @@
+rootProject.name = "crypto-realtime-ingestion"
+
+include(
+    "CryptoDataConsumers",
+    "CryptoDataProducers",
+)
