@@ -10,14 +10,7 @@ Use the details below to connect local services or external tools (e.g. Condukto
 
 ---
 
-## Connection Details
-
-- **Bootstrap servers**: `127.0.0.1:9092`  
-- **Primary raw topic**: `crypto.realtime.data.btc`  
-- **Aggregated topic**: `btc.avg.per.minute`  
-
----
-
+ 
 ## Standard Fields
 
 | Field                    | Value                        |
@@ -51,7 +44,7 @@ Elasticsearch is used as the analytics store for trade events and ksqlDB aggrega
 | **Host**    | `localhost`                |
 | **Port**    | `9200`                     |
 | **Scheme**  | `http`                     |
-| **Index**   | `crypto` (or `btc_aggregates`) |
+| **Index**   | `crypto`                   |
 
 ---
 
@@ -65,3 +58,27 @@ All dependencies (Kafka, ksqlDB, Elasticsearch, Kibana, Conduktor, Postgres) are
 
 ```bash
 docker compose up -d
+```
+
+```
+run BtcProducer.java
+```
+
+```
+run BtcConsumer.java
+```
+
+## Create table and view in ksqlDB
+In Conductor Console go into:
+1. Kafka Connect
+2. Manage cluster
+3. My Local Kafka Cluster
+4. ksqlDB
+5. Add a ksqlDB
+6. Create connection
+
+| Field            | Value                       |
+|------------------|-----------------------------|
+| **Name**         | `btc-data`                  |
+| **Technical ID** | `btc-data`                  |
+| **URL**          | `http://ksqldb-server:8088` |
