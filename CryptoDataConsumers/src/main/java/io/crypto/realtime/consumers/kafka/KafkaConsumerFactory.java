@@ -1,4 +1,4 @@
-package io.crypto.realtime.consumers.elasticsearch;
+package io.crypto.realtime.consumers.kafka;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-public class KafkaUtils {
-    private static final Logger log = LoggerFactory.getLogger(KafkaUtils.class);
+public class KafkaConsumerFactory {
+    private static final Logger log = LoggerFactory.getLogger(KafkaConsumerFactory.class);
 
     public static KafkaConsumer<String, String> createConsumer(String bootstrap, String groupId) {
         Properties props = new Properties();

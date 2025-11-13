@@ -1,4 +1,4 @@
-package io.crypto.realtime.producers;
+package io.crypto.realtime.producers.kafka;
 
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.errors.TopicExistsException;

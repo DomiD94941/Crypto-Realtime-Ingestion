@@ -3,6 +3,7 @@ package io.crypto.realtime.consumers.btc;
 import io.crypto.realtime.consumers.elasticsearch.*;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.json.JsonData;
+import io.crypto.realtime.consumers.kafka.KafkaConsumerFactory;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class BtcConsumer {
         log.info("Starting BTC Consumer -> ES: {}, topic: {}", esUrl, topic);
 
         ElasticsearchService es = new ElasticsearchService(esUrl);
-        KafkaConsumer<String, String> consumer = KafkaUtils.createConsumer(bootstrap, groupId);
+        KafkaConsumer<String, String> consumer = KafkaConsumerFactory.createConsumer(bootstrap, groupId);
 
         es.waitUntilReady();
         es.ensureIndexExists(indexName);

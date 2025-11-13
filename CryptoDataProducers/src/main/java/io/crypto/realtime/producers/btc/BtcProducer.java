@@ -2,18 +2,15 @@ package io.crypto.realtime.producers.btc;
 
 import io.crypto.realtime.producers.BinanceWebSocketListener;
 import io.crypto.realtime.producers.KafkaTopicCreator;
+import io.crypto.realtime.producers.kafka.KafkaProducerFactory;
 import io.crypto.realtime.producers.ksql.KsqlInitializer;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class BtcProducer {
@@ -44,8 +41,8 @@ public class BtcProducer {
         KsqlInitializer.createSourceStream(ksqlUrl, TOPIC);
         KsqlInitializer.createFinalAvgTable(ksqlUrl, SINK_TOPIC);
 
-        // Configure and create Kafka Producer
-        KafkaProducer<String, String> producer = getKafkaProducer();
+        // Create Kafka Producer using shared factory
+        KafkaProducer<String, String> producer = KafkaProducerFactory.createProducer(BOOTSTRAP_SERVER);
 
         // Configure OkHttp client for WebSocket (no timeout for streaming)
         OkHttpClient client = new OkHttpClient.Builder()
@@ -72,23 +69,5 @@ public class BtcProducer {
             client.connectionPool().evictAll(); // Clear HTTP connections
             client.dispatcher().executorService().shutdown(); // Stop internal threads
         }));
-    }
-
-    /**
-     * Configure Kafka producer with recommended production settings:
-     * - String serializers
-     * - Strong delivery guarantees (acks=all)
-     * - Idempotence enabled to prevent duplicates
-     */
-    @NotNull
-    private static KafkaProducer<String, String> getKafkaProducer() {
-        Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER);
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
-        properties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-
-        return new KafkaProducer<>(properties);
     }
 }
