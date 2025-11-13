@@ -61,11 +61,13 @@ docker compose up -d
 ```
 
 ```
-run BtcProducer.java
+cd CryptoDataProducers
+./gradlew :CryptoDataProducers:run --args=""
 ```
 
 ```
-run BtcConsumer.java
+cd CryptoDataConsumers
+./gradlew :CryptoDataConsumers:run --args="--bootstrap 127.0.0.1:9092 --es http://localhost:9200"
 ```
 
 ## Create table and view in ksqlDB
