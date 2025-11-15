@@ -5,6 +5,12 @@
 # Build outputs
 build/
 **/build/
+bin/
+out/
+.gradle/
+**/build/
+**/bin/
+
 
 # IntelliJ IDEA project files
 .idea/
@@ -24,3 +30,4 @@ Thumbs.db
 
 # Environment variable files
 .env
+
