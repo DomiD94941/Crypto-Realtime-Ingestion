@@ -103,8 +103,7 @@ After creation, you can run ksql commands.
 Default values for local cluster:
 
 * **URL:** `http://localhost:9200`
-* **Default index:** `crypto`
-* **Aggregates index:** `btc_aggregates`
+* **Default index** `crypto`
 
 ## Standard fields
 
@@ -131,7 +130,6 @@ Once Elasticsearch receives data:
 2. Go to **Stack Management → Index Patterns**
 3. Create index pattern:
    * `crypto*` for raw data
-   * `btc_aggregates*` for aggregated metrics
 4. Open **Discover** or **Dashboards**
 
 ---
