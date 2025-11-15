@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'io.crypto.realtime.consumer'
@@ -44,6 +45,11 @@ test {
     useJUnitPlatform()
 }
 
-application {
-    mainClass = "io.crypto.realtime.consumers.btc.BtcConsumer"
+shadowJar {
+    archiveBaseName.set('consumer')
+    archiveVersion.set('')
+    archiveClassifier.set('all')
+    manifest {
+        attributes 'Main-Class': 'io.crypto.realtime.consumers.btc.BtcConsumer'
+    }
 }

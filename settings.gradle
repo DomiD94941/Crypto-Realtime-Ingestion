@@ -1,4 +1,4 @@
-rootProject.name = "crypto-realtime-ingestion"
+rootProject.name = "Crypto-Realtime-Ingestion"
 
 include(
     "CryptoDataConsumers",
