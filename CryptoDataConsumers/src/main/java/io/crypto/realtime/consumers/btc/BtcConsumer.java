@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BtcConsumer {
     private static final Logger log = LoggerFactory.getLogger(BtcConsumer.class);
     private static final String DEFAULT_TOPIC = "crypto.realtime.data.btc";
-    private static final String DEFAULT_INDEX = "crypto";
+    private static final String DEFAULT_INDEX = "btc_data";
     private static final String DEFAULT_GROUP_PREFIX = "consumer-elasticsearch-demo-";
 
     private static String getBootstrapServer() {
@@ -42,11 +42,11 @@ public class BtcConsumer {
     public static void main(String[] args) throws IOException {
         Map<String, String> cli = ElasticsearchUtils.parseArgs(args);
 
-        final String esUrl     = ElasticsearchUtils.get(cli, "es", getEsUrl());
+        final String esUrl = ElasticsearchUtils.get(cli, "es", getEsUrl());
         final String bootstrap = ElasticsearchUtils.get(cli, "bootstrap", getBootstrapServer());
-        final String topic     = ElasticsearchUtils.get(cli, "topic", DEFAULT_TOPIC);
+        final String topic = ElasticsearchUtils.get(cli, "topic", DEFAULT_TOPIC);
         final String indexName = ElasticsearchUtils.get(cli, "index", DEFAULT_INDEX);
-        final String groupId   = ElasticsearchUtils.get(cli, "group", DEFAULT_GROUP_PREFIX + System.currentTimeMillis());
+        final String groupId = ElasticsearchUtils.get(cli, "group", DEFAULT_GROUP_PREFIX + System.currentTimeMillis());
         
         log.info("Starting BTC Consumer -> ES: {}, topic: {}", esUrl, topic);
 
