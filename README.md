@@ -58,17 +58,11 @@ Use the following parameters for CLI tools, Conduktor, or custom applications.
 
 ---
 
-## Run Producer in a container
+## Run Producer and Consumer Manually
 
 ```bash
-docker run --network=host crypto-image producer
-```
-
----
-
-## Run Consumer in a container
-```bash
-docker run --network=host crypto-image consumer
+docker compose --profile manual up -d producer
+docker compose --profile manual up -d consumer
 ```
 
 ---
