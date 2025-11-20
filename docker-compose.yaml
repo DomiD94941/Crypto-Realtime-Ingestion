@@ -89,6 +89,32 @@ services:
       - SERVER_NAME=kibana
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
 
+  producer:
+    image: crypto-image
+    build: .
+    command: producer
+    profiles: ["manual"]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      KSQL_URL: http://ksqldb-server:8088
+    depends_on:
+      - kafka
+      - postgresql
+
+  consumer:
+    image: crypto-image
+    build: .
+    command: consumer
+    profiles: ["manual"]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      ES_URL: http://elasticsearch:9200
+    depends_on:
+      - kafka
+      - postgresql
+
 volumes:
   es_data: {}
   pg_data: {}

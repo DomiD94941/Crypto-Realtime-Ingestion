@@ -21,4 +21,7 @@ WORKDIR /app
 COPY --from=build /app/CryptoDataProducers/build/libs/*-all.jar producer.jar
 COPY --from=build /app/CryptoDataConsumers/build/libs/*-all.jar consumer.jar
 
-ENTRYPOINT ["sh"]
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+ENTRYPOINT ["/app/start.sh"]

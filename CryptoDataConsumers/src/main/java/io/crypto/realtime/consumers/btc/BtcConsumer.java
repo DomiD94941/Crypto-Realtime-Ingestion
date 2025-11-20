@@ -16,22 +16,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BtcConsumer {
     private static final Logger log = LoggerFactory.getLogger(BtcConsumer.class);
-
-    private static final String DEFAULT_ES_URL = "http://localhost:9200";
-    private static final String DEFAULT_BOOTSTRAP = "127.0.0.1:9092";
     private static final String DEFAULT_TOPIC = "crypto.realtime.data.btc";
     private static final String DEFAULT_INDEX = "crypto";
     private static final String DEFAULT_GROUP_PREFIX = "consumer-elasticsearch-demo-";
 
+    private static String getBootstrapServer() {
+        String bs = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
+        if (bs == null || bs.isBlank()) {
+            bs = System.getenv("SPRING_KAFKA_BOOTSTRAP_SERVERS");
+        }
+        if (bs == null || bs.isBlank()) {
+            bs = "kafka:19092"; // default for compose
+        }
+            return bs;
+    }
+
+    private static String getEsUrl() {
+        String url = System.getenv("ES_URL");
+        if (url == null || url.isBlank()) {
+            url = "http://elasticsearch:9200";
+        }
+        return url;
+    }
+
     public static void main(String[] args) throws IOException {
         Map<String, String> cli = ElasticsearchUtils.parseArgs(args);
 
-        final String esUrl     = ElasticsearchUtils.get(cli, "es", DEFAULT_ES_URL);
-        final String bootstrap = ElasticsearchUtils.get(cli, "bootstrap", DEFAULT_BOOTSTRAP);
+        final String esUrl     = ElasticsearchUtils.get(cli, "es", getEsUrl());
+        final String bootstrap = ElasticsearchUtils.get(cli, "bootstrap", getBootstrapServer());
         final String topic     = ElasticsearchUtils.get(cli, "topic", DEFAULT_TOPIC);
         final String indexName = ElasticsearchUtils.get(cli, "index", DEFAULT_INDEX);
         final String groupId   = ElasticsearchUtils.get(cli, "group", DEFAULT_GROUP_PREFIX + System.currentTimeMillis());
-
+        
         log.info("Starting BTC Consumer -> ES: {}, topic: {}", esUrl, topic);
 
         ElasticsearchService es = new ElasticsearchService(esUrl);
